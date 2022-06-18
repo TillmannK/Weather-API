@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wetter API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <div class="background" id="body">
+        
+    </div>
+
+    <div class="content">
+        <div class="inp-cont" id="inp-cont">
+            <input class="inpField" placeholder="Cityname..." type="text" id="input">
+            <button id="btn" class="button">Click me</button>
+            <button class="button2">Click me</button>
+        </div>
+        <div class="data-cont" id="data-cont">
+            <div class="left">
+                <p class="city" id="city"></p>
+                <p class="p" id="p"></p>
+                <p class="hum" id="hum"></p>
+                <p class="wind" id="wind"></p>
+            </div>
+            <img src="" id="img">
+        </div>
+        <iframe class="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21813878.478339903!2d4.175920855063557!3d48.1328602760126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46ed8886cfadda85%3A0x72ef99e6b3fcf079!2sEuropa!5e0!3m2!1sde!2sde!4v1649508487002!5m2!1sde!2sde" width="600" height="450" style="border:0;" allowfullscreen="true" referrerpolicy="no-referrer-when-downgrade"></iframe>    </div>
+
+    <div class="footer"><p onclick="window.open('https://tillmann-kolck.de/')">www.tillmann-kolck.de</a></div>
+
+    <script>
+        let img = document.getElementById('img');
+        let p = document.getElementById('p');
+        let btn = document.getElementById('btn');
+        let loc = document.getElementById('city');
+        let hum = document.getElementById('hum');
+        let wind = document.getElementById('wind');
+        let dataCont = document.getElementById('data-cont');
+        let inpCont = document.getElementById('inp-cont');
+        let inp = document.getElementById('input');
+        btn.addEventListener('click', function() {
+            dataCont.style.opacity = '1';
+            let city = document.getElementById('input').value;
+            inpCont.style.animation = 'inp forwards 0.6s';
+            $.getJSON('https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=metric&appid=3f176137f00b5a7849a1fbd6abf20b62', function(data) {
+                console.log(data);
+                var icon = 'http://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
+                img.src = icon;
+                var temp = data.main.temp;
+                p.textContent = 'Temperatur: ' +  temp + ' C°';
+                var place = data.name;
+                loc.textContent = place;
+                var hummid = data.main.humidity;
+                hum.textContent = 'Humidity: ' + hummid + ' %';
+                var speed = data.wind.speed;
+                wind.textContent = 'Windspeed: ' + speed + ' km/h';
+                dataCont.style.animation = 'data forwards 0.6s';
+                dataCont.style.opacity = '1';
+            });
+            setInterval(function() {
+                $.getJSON('https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=metric&appid=3f176137f00b5a7849a1fbd6abf20b62', function(data) {
+                    console.log(data);
+                    var icon = 'http://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
+                    img.src = icon;
+                    var temp = data.main.temp;
+                    p.textContent = temp + ' C°';
+                    var place = data.name;
+                    loc.textContent = place;
+                    var hummid = data.main.humidity;
+                    hum.textContent = hummid + ' %';
+                    var speed = data.wind.speed;
+                    wind.textContent = speed + ' km/h';
+                });
+            }, 1200000)
+        });
+
+
+
+        let body = document.getElementById('body');
+        var assetArr = ['BG2.jpg', 'BG5.jpg', 'BG7.jpg', 'BG9.jpg', 'BG10.jpg'];
+
+        window.onload = function() {
+            setInterval(function() {
+                var assets = assetArr[Math.floor(Math.random()*assetArr.length)];
+                body.style.backgroundImage = 'url(img/' + assets + ')';
+            }, 60000)
+        }
+
+    </script>
+</body>
+</html>
